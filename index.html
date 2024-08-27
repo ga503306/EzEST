@@ -180,7 +180,7 @@
         if (company === '創世紀') {
             if (fabricType === '5尺布') {
                 let widthFactor = Math.ceil(width * 2 / 30.3 / 5); //無條件進位置個位數
-                let heightFactor = Math.ceil(height / 30.3 + 1); //無條件進位置個位數
+                let heightFactor = Math.ceil((height / 30.3 + 1) * widthFactor / 3); //無條件進位置個位數
                 yardage = Math.ceil((heightFactor + widthFactor) * 10) / 10;//進位到小數點第一位
                 fabricCost = (code * 0.5) * yardage;
                 // 軌道成本計算
@@ -232,7 +232,7 @@
         else if (company === '大都會') {
             if (fabricType === '5尺布') {
                 let widthFactor = Math.ceil(width * 2 / 30.3 / 5); //無條件進位置個位數
-                let heightFactor = Math.ceil(height / 30.3 + 1); //無條件進位置個位數
+                let heightFactor = Math.ceil((height / 30.3 + 1) * widthFactor / 3); //無條件進位置個位數
                 yardage = Math.ceil((heightFactor + widthFactor) * 10) / 10;//進位到小數點第一位
                 fabricCost = (code * 0.3) * yardage;
                 // 軌道成本計算
