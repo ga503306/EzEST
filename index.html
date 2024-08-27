@@ -25,7 +25,7 @@
         </div>
         <div class="form-group">
             <label for="codeInput">Code</label>
-            <input type="number" id="codeInput" class="form-control" min="0" max="9999">
+            <input type="number" id="codeInput" class="form-control" min="0" max="9999" required >
         </div>
         <div class="form-group">
             <label for="fabricTypeSelect">規格</label>
@@ -43,11 +43,11 @@
         </div>
         <div class="form-group">
             <label for="widthInput">寬</label>
-            <input type="number" id="widthInput" class="form-control">
+            <input type="number" id="widthInput" class="form-control" required>
         </div>
         <div class="form-group" id="heightGroup">
             <label for="heightInput">高</label>
-            <input type="number" id="heightInput" class="form-control">
+            <input type="number" id="heightInput" class="form-control" required>
         </div>
         <div class="form-group">
             <label for="trackSelect">軌道</label>
@@ -57,13 +57,39 @@
             </select>
         </div>
         <div class="form-group">
-            <button type="button" class="btn btn-primary" onclick="calculate()">計算</button>
+              <button type="submit" class="btn btn-primary">計算</button>
         </div>
         <div class="form-group">
             <label for="result">總金額</label>
             <input type="text" id="result" class="form-control" readonly>
         </div>
+			<div class="container mt-5 mb-5">
+    <h4>測試計算結果，確認數字都正確後將移除此區塊</h4>
+    <div class="row">
+        <div class="col-sm">
+            <label for="yardageOutput">碼數</label>
+            <input type="text" class="form-control" id="yardageOutput" readonly>
+        </div>
+        <div class="col-sm">
+            <label for="fabricCostOutput">布料成本</label>
+            <input type="text" class="form-control" id="fabricCostOutput" readonly>
+        </div>
+        <div class="col-sm">
+            <label for="trackCostOutput">軌道成本</label>
+            <input type="text" class="form-control" id="trackCostOutput" readonly>
+        </div>
+        <div class="col-sm">
+            <label for="sewingCostOutput">車工費</label>
+            <input type="text" class="form-control" id="sewingCostOutput" readonly>
+        </div>
+        <div class="col-sm">
+            <label for="installationCostOutput">安裝費</label>
+            <input type="text" class="form-control" id="installationCostOutput" readonly>
+        </div>
+    </div>
+</div>
     </form>
+
 </div>
 
 <!-- jQuery and Bootstrap JS -->
@@ -82,6 +108,18 @@
             updateFoldLabel();
             updateMaterialOptions();
             toggleHeightInput();
+        });
+		
+		// 假設表單提交時觸發計算
+        $('#calculationForm').on('submit', function(event) {
+		    // 檢查高欄位的顯示狀態，如果隱藏就移除 required 屬性
+			if ($('#heightGroup').is(':hidden')) {
+				$('#heightInput').prop('required', false);
+			} else {
+				$('#heightInput').prop('required', true);
+			}
+            event.preventDefault(); // 防止表單提交
+            calculate();
         });
     });
 
@@ -112,9 +150,11 @@
     function toggleHeightInput() {
         let fabricType = $('#fabricTypeSelect').val();
         if (fabricType === '5尺布') {
+		    $('#heightInput').prop('required', true).attr('name', 'height');
             $('#heightGroup').show();
         } else {
             $('#heightGroup').hide();
+			$('#heightInput').prop('required', false).removeAttr('name');
         }
     }
 
@@ -139,13 +179,13 @@
         // 創世紀公司的計算邏輯
         if (company === '創世紀') {
             if (fabricType === '5尺布') {
-                let widthFactor = Math.ceil(width * 2 / 30.3 / 5);
-                let heightFactor = Math.ceil(height / 30.3 + 1);
-                yardage = Math.ceil(widthFactor + heightFactor);
+                let widthFactor = Math.ceil(width * 2 / 30.3 / 5); //無條件進位置個位數
+                let heightFactor = Math.ceil(height / 30.3 + 1); //無條件進位置個位數
+                yardage = Math.ceil((heightFactor + widthFactor) * 10) / 10;//進位到小數點第一位
                 fabricCost = (code * 0.5) * yardage;
                 // 軌道成本計算
                 if (track === '有') {
-                    let size = Math.ceil(width / 30.3);
+                    let size = parseFloat((width / 30.3).toFixed(2));//四捨五入進位到小數點第二位
                     if (size < 5) size = 5;
                     trackCost = size * 42;
                 } else {
@@ -158,15 +198,15 @@
                     sewingCost = widthFactor * 130;
                 }
                 // 安裝費用
-                let installationSize = Math.ceil(width / 30.3);
+                let installationSize = Math.ceil(width / 30.3);//進位到個位數
                 if (installationSize < 6) installationSize = 6;
                 installationCost = installationSize * 40;
             } else if (fabricType === '9尺布' || fabricType === '9尺布紗') {
-                yardage = Math.ceil(width / 2.2 / 30.3 / 3);
+                yardage = Math.ceil((width / 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
                 fabricCost = (code * 0.5) * yardage;
                 // 軌道成本計算
                 if (track === '有') {
-                    let size = Math.ceil(width / 30.3);
+                    let size = parseFloat((width / 30.3).toFixed(2));//四捨五入進位到小數點第二位
                     if (size < 5) size = 5;
                     trackCost = size * 42;
                 } else {
@@ -183,7 +223,7 @@
                     sewingCost = yardage * 90;
                 }
                 // 安裝費用
-                let installationSize = Math.ceil(width / 30.3);
+                let installationSize = Math.ceil(width / 30.3);//進位到個位數
                 if (installationSize < 6) installationSize = 6;
                 installationCost = installationSize * 40;
             }
@@ -191,13 +231,13 @@
         // 大都會公司的計算邏輯
         else if (company === '大都會') {
             if (fabricType === '5尺布') {
-                let widthFactor = Math.ceil(width * 2 / 30.3 / 5);
-                let heightFactor = Math.ceil(height / 30.3 + 1);
-                yardage = Math.ceil(widthFactor + heightFactor);
+                let widthFactor = Math.ceil(width * 2 / 30.3 / 5); //無條件進位置個位數
+                let heightFactor = Math.ceil(height / 30.3 + 1); //無條件進位置個位數
+                yardage = Math.ceil((heightFactor + widthFactor) * 10) / 10;//進位到小數點第一位
                 fabricCost = (code * 0.3) * yardage;
                 // 軌道成本計算
                 if (track === '有') {
-                    let size = Math.ceil(width / 30.3);
+                    let size = parseFloat((width / 30.3).toFixed(2));//四捨五入進位到小數點第二位
                     if (size < 5) size = 5;
                     trackCost = size * 42;
                 } else {
@@ -206,15 +246,15 @@
                 // 車工費用
                 sewingCost = widthFactor * 105;
                 // 安裝費用
-                let installationSize = Math.ceil(width / 30.3);
+                let installationSize = Math.ceil(width / 30.3);//進位到個位數
                 if (installationSize < 6) installationSize = 6;
                 installationCost = installationSize * 40;
             } else if (fabricType === '9尺布') {
-                yardage = Math.ceil(width / 2.2 / 30.3 / 3);
+				yardage = Math.ceil((width / 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
                 fabricCost = (code * 0.3) * yardage;
                 // 軌道成本計算
                 if (track === '有') {
-                    let size = Math.ceil(width / 30.3);
+                    let size = parseFloat((width / 30.3).toFixed(2));//四捨五入進位到小數點第二位
                     if (size < 5) size = 5;
                     trackCost = size * 42;
                 } else {
@@ -223,15 +263,15 @@
                 // 車工費用
                 sewingCost = yardage * 105;
                 // 安裝費用
-                let installationSize = Math.ceil(width / 30.3);
+                let installationSize = Math.ceil(width / 30.3);//進位到個位數
                 if (installationSize < 6) installationSize = 6;
                 installationCost = installationSize * 40;
             } else if (fabricType === '9尺布紗') {
-                yardage = Math.ceil(width / 2.2 / 30.3 / 3);
+                yardage = Math.ceil((width / 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
                 fabricCost = (code * 0.3) * yardage;
                 // 軌道成本計算
                 if (track === '有') {
-                    let size = Math.ceil(width / 30.3);
+                    let size = parseFloat((width / 30.3).toFixed(2));//四捨五入進位到小數點第二位
                     if (size < 5) size = 5;
                     trackCost = size * 42;
                 } else {
@@ -240,7 +280,7 @@
                 // 車工費用
                 sewingCost = yardage * 105;
                 // 安裝費用
-                let installationSize = Math.ceil(width / 30.3);
+                let installationSize = Math.ceil(width / 30.3);//進位到個位數
                 if (installationSize < 6) installationSize = 6;
                 installationCost = installationSize * 40;
             }
@@ -248,6 +288,14 @@
 
         // 總金額計算
         let totalAmount = (fabricCost + trackCost + sewingCost) * 3 + installationCost;
+        $('#result').val(totalAmount);
+		
+		 // 確認計算結果
+        $('#yardageOutput').val(yardage.toFixed(2));
+        $('#fabricCostOutput').val(fabricCost.toFixed(2));
+        $('#trackCostOutput').val(trackCost.toFixed(2));
+        $('#sewingCostOutput').val(sewingCost.toFixed(2));
+        $('#installationCostOutput').val(installationCost.toFixed(2));
         $('#result').val(totalAmount.toFixed(2));
     }
 </script>
