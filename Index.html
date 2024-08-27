@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>計算頁面</title>
+    <!-- Bootstrap and Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center">布料計算器</h2>
+    <form id="calculationForm">
+        <div class="form-group">
+            <label for="companySelect">公司</label>
+            <select id="companySelect" class="form-control">
+                <option value="創世紀">創世紀</option>
+                <option value="大都會">大都會</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="foldLabel">折數</label>
+            <input type="text" id="foldLabel" class="form-control" readonly>
+        </div>
+        <div class="form-group">
+            <label for="codeInput">Code</label>
+            <input type="number" id="codeInput" class="form-control" min="0" max="9999">
+        </div>
+        <div class="form-group">
+            <label for="fabricTypeSelect">規格</label>
+            <select id="fabricTypeSelect" class="form-control">
+                <option value="5尺布">5尺布</option>
+                <option value="9尺布">9尺布</option>
+                <option value="9尺布紗">9尺布紗</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="materialSelect">布料材質選擇</label>
+            <select id="materialSelect" class="form-control">
+                <!-- Options will be dynamically populated -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="widthInput">寬</label>
+            <input type="number" id="widthInput" class="form-control">
+        </div>
+        <div class="form-group" id="heightGroup">
+            <label for="heightInput">高</label>
+            <input type="number" id="heightInput" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="trackSelect">軌道</label>
+            <select id="trackSelect" class="form-control">
+                <option value="有">有</option>
+                <option value="無">無</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="button" class="btn btn-primary" onclick="calculate()">計算</button>
+        </div>
+        <div class="form-group">
+            <label for="result">總金額</label>
+            <input type="text" id="result" class="form-control" readonly>
+        </div>
+    </form>
+</div>
+
+<!-- jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // 初始化頁面時根據選擇填入材質選項與折數
+        updateFoldLabel();
+        updateMaterialOptions();
+        toggleHeightInput();
+        
+        // 當公司或規格改變時，更新折數和布料材質選項
+        $('#companySelect, #fabricTypeSelect').change(function() {
+            updateFoldLabel();
+            updateMaterialOptions();
+            toggleHeightInput();
+        });
+    });
+
+    // 更新折數標籤
+    function updateFoldLabel() {
+        let company = $('#companySelect').val();
+        if (company === '創世紀') {
+            $('#foldLabel').val('5折');
+        } else if (company === '大都會') {
+            $('#foldLabel').val('3折');
+        }
+    }
+
+    // 更新布料材質選項
+    function updateMaterialOptions() {
+        let fabricType = $('#fabricTypeSelect').val();
+        let materialSelect = $('#materialSelect');
+        materialSelect.empty(); // 清空選項
+        if (fabricType === '5尺布' || fabricType === '9尺布') {
+            materialSelect.append(new Option('三明治遮光布', '三明治遮光布'));
+            materialSelect.append(new Option('強遮光/全遮光', '強遮光/全遮光'));
+        } else if (fabricType === '9尺布紗') {
+            materialSelect.append(new Option('9尺布紗', '9尺布紗'));
+        }
+    }
+
+    // 根據規格顯示或隱藏高度輸入欄位
+    function toggleHeightInput() {
+        let fabricType = $('#fabricTypeSelect').val();
+        if (fabricType === '5尺布') {
+            $('#heightGroup').show();
+        } else {
+            $('#heightGroup').hide();
+        }
+    }
+
+    // 計算總金額
+    function calculate() {
+        let company = $('#companySelect').val();
+        let fabricType = $('#fabricTypeSelect').val();
+        let code = parseFloat($('#codeInput').val());
+        let width = parseFloat($('#widthInput').val());
+        let height = parseFloat($('#heightInput').val());
+        let track = $('#trackSelect').val();
+        let material = $('#materialSelect').val();
+
+        // 初始變數
+        // 計算用的初始變數
+        let yardage = 0;          // 碼數：依據布料寬度及高度計算的總長度，用於布料成本與車工費計算
+        let fabricCost = 0;       // 布料成本：根據碼數與輸入的 code 值計算的布料成本
+        let trackCost = 0;        // 軌道成本：如果選擇安裝軌道，根據寬度計算出的總成本
+        let sewingCost = 0;       // 車工費：根據布料材質及幅數或碼數來計算車工費
+        let installationCost = 0; // 安裝費：根據寬度（尺）來計算的安裝費，最低為6尺的費用
+
+        // 創世紀公司的計算邏輯
+        if (company === '創世紀') {
+            if (fabricType === '5尺布') {
+                let widthFactor = Math.ceil(width * 2 / 30.3 / 5);
+                let heightFactor = Math.ceil(height / 30.3 + 1);
+                yardage = Math.ceil(widthFactor + heightFactor);
+                fabricCost = (code * 0.5) * yardage;
+                // 軌道成本計算
+                if (track === '有') {
+                    let size = Math.ceil(width / 30.3);
+                    if (size < 5) size = 5;
+                    trackCost = size * 42;
+                } else {
+                    trackCost = 0;
+                }
+                // 車工費用
+                if (material === '三明治遮光布') {
+                    sewingCost = widthFactor * 100;
+                } else if (material === '強遮光/全遮光') {
+                    sewingCost = widthFactor * 130;
+                }
+                // 安裝費用
+                let installationSize = Math.ceil(width / 30.3);
+                if (installationSize < 6) installationSize = 6;
+                installationCost = installationSize * 40;
+            } else if (fabricType === '9尺布' || fabricType === '9尺布紗') {
+                yardage = Math.ceil(width / 2.2 / 30.3 / 3);
+                fabricCost = (code * 0.5) * yardage;
+                // 軌道成本計算
+                if (track === '有') {
+                    let size = Math.ceil(width / 30.3);
+                    if (size < 5) size = 5;
+                    trackCost = size * 42;
+                } else {
+                    trackCost = 0;
+                }
+                // 車工費用
+                if (fabricType === '9尺布') {
+                    if (material === '三明治遮光布') {
+                        sewingCost = yardage * 100;
+                    } else if (material === '強遮光/全遮光') {
+                        sewingCost = yardage * 130;
+                    }
+                } else if (fabricType === '9尺布紗') {
+                    sewingCost = yardage * 90;
+                }
+                // 安裝費用
+                let installationSize = Math.ceil(width / 30.3);
+                if (installationSize < 6) installationSize = 6;
+                installationCost = installationSize * 40;
+            }
+        }
+        // 大都會公司的計算邏輯
+        else if (company === '大都會') {
+            if (fabricType === '5尺布') {
+                let widthFactor = Math.ceil(width * 2 / 30.3 / 5);
+                let heightFactor = Math.ceil(height / 30.3 + 1);
+                yardage = Math.ceil(widthFactor + heightFactor);
+                fabricCost = (code * 0.3) * yardage;
+                // 軌道成本計算
+                if (track === '有') {
+                    let size = Math.ceil(width / 30.3);
+                    if (size < 5) size = 5;
+                    trackCost = size * 42;
+                } else {
+                    trackCost = 0;
+                }
+                // 車工費用
+                sewingCost = widthFactor * 105;
+                // 安裝費用
+                let installationSize = Math.ceil(width / 30.3);
+                if (installationSize < 6) installationSize = 6;
+                installationCost = installationSize * 40;
+            } else if (fabricType === '9尺布') {
+                yardage = Math.ceil(width / 2.2 / 30.3 / 3);
+                fabricCost = (code * 0.3) * yardage;
+                // 軌道成本計算
+                if (track === '有') {
+                    let size = Math.ceil(width / 30.3);
+                    if (size < 5) size = 5;
+                    trackCost = size * 42;
+                } else {
+                    trackCost = 0;
+                }
+                // 車工費用
+                sewingCost = yardage * 105;
+                // 安裝費用
+                let installationSize = Math.ceil(width / 30.3);
+                if (installationSize < 6) installationSize = 6;
+                installationCost = installationSize * 40;
+            } else if (fabricType === '9尺布紗') {
+                yardage = Math.ceil(width / 2.2 / 30.3 / 3);
+                fabricCost = (code * 0.3) * yardage;
+                // 軌道成本計算
+                if (track === '有') {
+                    let size = Math.ceil(width / 30.3);
+                    if (size < 5) size = 5;
+                    trackCost = size * 42;
+                } else {
+                    trackCost = 0;
+                }
+                // 車工費用
+                sewingCost = yardage * 105;
+                // 安裝費用
+                let installationSize = Math.ceil(width / 30.3);
+                if (installationSize < 6) installationSize = 6;
+                installationCost = installationSize * 40;
+            }
+        }
+
+        // 總金額計算
+        let totalAmount = (fabricCost + trackCost + sewingCost) * 3 + installationCost;
+        $('#result').val(totalAmount.toFixed(2));
+    }
+</script>
+</body>
+</html>
