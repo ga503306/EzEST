@@ -202,7 +202,7 @@
                 if (installationSize < 6) installationSize = 6;
                 installationCost = installationSize * 40;
             } else if (fabricType === '9尺布' || fabricType === '9尺布紗') {
-                yardage = Math.ceil((width / 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
+                yardage = Math.ceil((width * 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
                 fabricCost = (code * 0.5) * yardage;
                 // 軌道成本計算
                 if (track === '有') {
@@ -250,7 +250,7 @@
                 if (installationSize < 6) installationSize = 6;
                 installationCost = installationSize * 40;
             } else if (fabricType === '9尺布') {
-				yardage = Math.ceil((width / 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
+				yardage = Math.ceil((width * 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
                 fabricCost = (code * 0.3) * yardage;
                 // 軌道成本計算
                 if (track === '有') {
@@ -267,7 +267,7 @@
                 if (installationSize < 6) installationSize = 6;
                 installationCost = installationSize * 40;
             } else if (fabricType === '9尺布紗') {
-                yardage = Math.ceil((width / 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
+                yardage = Math.ceil((width * 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
                 fabricCost = (code * 0.3) * yardage;
                 // 軌道成本計算
                 if (track === '有') {
