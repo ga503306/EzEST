@@ -180,7 +180,7 @@
         if (company === '創世紀') {
             if (fabricType === '5尺布') {
                 let widthFactor = Math.ceil(width * 2 / 30.3 / 5); //無條件進位置個位數
-                yardage = Math.ceil((height / 30.3 + 1) * widthFactor / 3); //無條件進位置個位數
+                yardage = Math.ceil((height / 30.3 + 1) * widthFactor / 3); //無條件進位置個位數 高度/30.3+1 再 高 * 幅數 / 3
                 // yardage = Math.ceil((heightFactor + widthFactor) * 10) / 10;//進位到小數點第一位
                 fabricCost = (code * 0.5) * yardage;
 		fabricCost = Math.ceil(fabricCost); //無條件進位
@@ -192,12 +192,13 @@
                 } else {
                     trackCost = 0;
                 }
-                // 車工費用
-                if (material === '三明治遮光布') {
-                    sewingCost = widthFactor * 100;
-                } else if (material === '強遮光/全遮光') {
-                    sewingCost = widthFactor * 130;
-                }
+                // 車工費用 5呎布 $100/幅
+		  sewingCost = widthFactor * 100;
+                //if (material === '三明治遮光布') {
+                //    sewingCost = widthFactor * 100;
+                //} else if (material === '強遮光/全遮光') {
+                //    sewingCost = widthFactor * 130;
+                //}
 		sewingCost = Math.ceil(sewingCost); //無條件進位
                 // 安裝費用
                 let installationSize = Math.ceil(width / 30.3);//進位到個位數
@@ -217,12 +218,15 @@
                 }
                 // 車工費用
                 if (fabricType === '9尺布') {
-                    if (material === '三明治遮光布') {
-                        sewingCost = yardage * 100;
-                    } else if (material === '強遮光/全遮光') {
-                        sewingCost = yardage * 130;
-                    }
+		    sewingCost = yardage * 90
+		    // 改 9呎布 $90/碼
+                    //if (material === '三明治遮光布') {
+                    //    sewingCost = yardage * 100;
+                    //} else if (material === '強遮光/全遮光') {
+                    //    sewingCost = yardage * 130;
+                    //}
                 } else if (fabricType === '9尺布紗') {
+		    //9尺紗 $90/碼
                     sewingCost = yardage * 90;
                 }
 		sewingCost = Math.ceil(sewingCost); //無條件進位
