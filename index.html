@@ -249,7 +249,7 @@
                     trackCost = 0;
                 }
                 // 車工費用
-                sewingCost = widthFactor * 105;
+                sewingCost = widthFactor * 95;
 		sewingCost = Math.ceil(sewingCost); //無條件進位
                 // 安裝費用
                 let installationSize = Math.ceil(width / 30.3);//進位到個位數
@@ -296,8 +296,13 @@
             }
         }
 
-        // 總金額計算
-        let totalAmount = (fabricCost + trackCost + sewingCost) * 3 + installationCost;
+	let amount = (fabricCost + trackCost + sewingCost);//先算出基本金額 因為紗還有鉛條
+	if(fabricType === '9尺布紗'){
+	   let size =  Math.ceil(width / 30.3) * 20 ;//(尺:無條件進位到個位數)  $20/尺
+	   amount = amount + size;
+	}
+        // 總金額計算 布單價+軌道（有或無）車工+鉛條(紗) *3 + 安裝費
+        let totalAmount = amount * 3 + installationCost;
 	totalAmount = Math.ceil(totalAmount); //無條件進位   
         $('#result').val(totalAmount);
 		
