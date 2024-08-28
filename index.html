@@ -86,6 +86,10 @@
             <label for="installationCostOutput">安裝費</label>
             <input type="text" class="form-control" id="installationCostOutput" readonly>
         </div>
+	<div class="col-sm">
+            <label for="leadOutput">鉛條</label>
+            <input type="text" class="form-control" id="leadOutput" readonly>
+        </div>
     </div>
 </div>
     </form>
@@ -175,6 +179,7 @@
         let trackCost = 0;        // 軌道成本：如果選擇安裝軌道，根據寬度計算出的總成本
         let sewingCost = 0;       // 車工費：根據布料材質及幅數或碼數來計算車工費
         let installationCost = 0; // 安裝費：根據寬度（尺）來計算的安裝費，最低為6尺的費用
+        let lead = 0;             // 鉛條：
 
         // 創世紀公司的計算邏輯
         if (company === '創世紀') {
@@ -302,8 +307,8 @@
 
 	let amount = (fabricCost + trackCost + sewingCost);//先算出基本金額 因為紗還有鉛條
 	if(fabricType === '9尺布紗'){
-	   let size =  Math.ceil(width / 30.3) * 20 ;//(尺:無條件進位到個位數)  $20/尺
-	   amount = amount + size;
+	    lead =  Math.ceil(width / 30.3) * 20 ;//(尺:無條件進位到個位數)  $20/尺
+	   amount = amount + lead;
 	}
         // 總金額計算 布單價+軌道（有或無）車工+鉛條(紗) *3 + 安裝費
         let totalAmount = amount * 3 + installationCost;
@@ -316,6 +321,7 @@
         $('#trackCostOutput').val(trackCost.toFixed(2));
         $('#sewingCostOutput').val(sewingCost.toFixed(2));
         $('#installationCostOutput').val(installationCost.toFixed(2));
+	$('#leadOutput').val(lead.toFixed(2)); 
         $('#result').val(totalAmount.toFixed(2));
     }
 </script>
