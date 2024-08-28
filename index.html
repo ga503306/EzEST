@@ -185,7 +185,7 @@
         if (company === '創世紀') {
             if (fabricType === '5尺布') {
                 let widthFactor = Math.ceil(width * 2 / 30.3 / 5); //無條件進位置個位數
-                yardage = Math.ceil((height / 30.3 + 1) * widthFactor / 3); //無條件進位置個位數 高度/30.3+1 再 高 * 幅數 / 3
+                yardage = Math.ceil(((height / 30.3 + 1) * widthFactor / 3) * 10 ) / 10; //無條件進位置個位數 高度/30.3+1 再 高 * 幅數 / 3
                 // yardage = Math.ceil((heightFactor + widthFactor) * 10) / 10;//進位到小數點第一位
                 fabricCost = (code * 0.5) * yardage;
 		fabricCost = Math.ceil(fabricCost); //無條件進位
@@ -245,7 +245,7 @@
         else if (company === '大都會') {
             if (fabricType === '5尺布') {
                 let widthFactor = Math.ceil(width * 2 / 30.3 / 5); //無條件進位置個位數
-                yardage = Math.ceil((height / 30.3 + 1) * widthFactor / 3); //無條件進位置個位數
+                yardage = Math.ceil(((height / 30.3 + 1) * widthFactor / 3) * 10) / 10 ; //進位到小數點第一位
                 //yardage = Math.ceil((heightFactor + widthFactor) * 10) / 10;//進位到小數點第一位
                 fabricCost = (code * 0.3) * yardage;
 		fabricCost = Math.ceil(fabricCost); //無條件進位
@@ -265,7 +265,7 @@
                 if (installationSize < 6) installationSize = 6;
                 installationCost = installationSize * 40;
             } else if (fabricType === '9尺布') {
-				yardage = Math.ceil((width * 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
+		yardage = Math.ceil((width * 2.2 / 30.3 / 3)* 10)/ 10;//進位到小數點第一位;
                 fabricCost = (code * 0.3) * yardage;
 		fabricCost = Math.ceil(fabricCost); //無條件進位
                 // 軌道成本計算
