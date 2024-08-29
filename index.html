@@ -317,7 +317,7 @@
 
 	let amount = (fabricCost + trackCost + sewingCost);//先算出基本金額 因為紗還有鉛條
 	if(fabricType === '9尺布紗'){
-	    lead =  Math.ceil(width / 30.3) * 20 ;//(尺:無條件進位到個位數)  $20/尺
+	    lead =  Math.ceil(width * 2.2 / 30.3) * 20 ;// (寬度2.2)/30.3 無條件進位 再20 (尺:無條件進位到個位數)  $20/尺
 	   amount = amount + lead;
 	}
         // 總金額計算 布單價+軌道（有或無）車工+鉛條(紗) *3 + 安裝費
