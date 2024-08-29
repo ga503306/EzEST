@@ -243,8 +243,9 @@
         }
         // 大都會公司的計算邏輯
         else if (company === '大都會') {
+	    let widthFactor = Math.ceil(width * 2 / 30.3 / 5); //無條件進位置個位數
             if (fabricType === '5尺布') {
-                let widthFactor = Math.ceil(width * 2 / 30.3 / 5); //無條件進位置個位數
+                //let widthFactor = Math.ceil(width * 2 / 30.3 / 5); //無條件進位置個位數
                 yardage = Math.ceil(((height / 30.3 + 1) * widthFactor / 3) * 10) / 10 ; //進位到小數點第一位
                 //yardage = Math.ceil((heightFactor + widthFactor) * 10) / 10;//進位到小數點第一位
                 fabricCost = (code * 0.3) * yardage;
