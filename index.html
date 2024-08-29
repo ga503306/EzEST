@@ -197,13 +197,13 @@
                 } else {
                     trackCost = 0;
                 }
-                // 車工費用 5呎布 $100/幅
-		  sewingCost = widthFactor * 100;
-                //if (material === '三明治遮光布') {
-                //    sewingCost = widthFactor * 100;
-                //} else if (material === '強遮光/全遮光') {
-                //    sewingCost = widthFactor * 130;
-                //}
+                // 車工費用 5呎 三明治 $100/幅 全遮光 $130/幅 8/29又改
+		// sewingCost = widthFactor * 100;
+                if (material === '三明治遮光布') {
+                    sewingCost = widthFactor * 100;
+                } else if (material === '強遮光/全遮光') {
+                    sewingCost = widthFactor * 130;
+                }
 		sewingCost = Math.ceil(sewingCost); //無條件進位
                 // 安裝費用
                 let installationSize = Math.ceil(width / 30.3);//進位到個位數
@@ -257,9 +257,14 @@
                 } else {
                     trackCost = 0;
                 }
-                // 車工費用
-                sewingCost = widthFactor * 95;
+                // 車工費用 5呎 三明治 $95/幅 全遮光 $105/幅
+                if (material === '三明治遮光布') {
+                    sewingCost = widthFactor * 95;
+                } else if (material === '強遮光/全遮光') {
+                    sewingCost = widthFactor * 105;
+                }
 		sewingCost = Math.ceil(sewingCost); //無條件進位
+                sewingCost = widthFactor * 95;
                 // 安裝費用
                 let installationSize = Math.ceil(width / 30.3);//進位到個位數
                 if (installationSize < 6) installationSize = 6;
@@ -276,8 +281,12 @@
                 } else {
                     trackCost = 0;
                 }
-                // 車工費用
-                sewingCost = yardage * 105;
+                // 車工費用 9尺布 三明治 $105/幅 全遮光 $115/幅
+                if (material === '三明治遮光布') {
+                    sewingCost = widthFactor * 105;
+                } else if (material === '強遮光/全遮光') {
+                    sewingCost = widthFactor * 115;
+                }
 		sewingCost = Math.ceil(sewingCost); //無條件進位
                 // 安裝費用
                 let installationSize = Math.ceil(width / 30.3);//進位到個位數
